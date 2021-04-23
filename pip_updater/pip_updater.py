@@ -43,8 +43,12 @@ class PipUpdater:
         self.packages["current"] = _installed_pkgs()
 
 
-    def save_changes(self, *args: str) -> Fil:
-        if len(*args) is 0:
+    def save_changes(self, *args: str) -> None:
+        """ Saves the self.packages dictionary as a JSON file.
+                - Takes a filepath optional argument
+                    - Or, uses default (cwd) location w/ name .updater_history
+        """
+        if len(args) is 0:
             with open(PipUpdater.DEFAULT_LOCATION, "w") as s:
                 json.dump(self.packages, s, indent=4)
 
