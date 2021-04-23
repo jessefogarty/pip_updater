@@ -1,20 +1,19 @@
 #!/usr/bin/python3
 """Main module."""
-
 import os
 import subprocess
-import re
 import json
 from typing import Dict, List, Union
 
-
-def _installed_pkgs() -> Dict[str, str]:
-    old_pkgs = (
-        subprocess.run(["pip", "freeze"], capture_output=True)
+def _scan() -> List[Dict[str, str]]:
+    _keys = ("name", "current_version", "newer_version")
+    _pip_pkgs = (
+        subprocess.run(["pip", "list", "--outdated"], capture_output=True)
         .stdout.decode()
         .splitlines()
     )
-    return {n: v for n, v in [re.split("==", p) for p in old_pkgs]}
+    
+    return [dict(zip(_keys, pkg)) for pkg in [tuple(t.split()[:3]) for t in _pip_pkgs[2:]]]
 
 
 class PipUpdater:
@@ -31,20 +30,12 @@ class PipUpdater:
             Sets:
                 packages["current"] = {pkg, ver ...}
         """
+        self.packages = _scan()
 
-        self.packages = {}  # type: Dict[str, Dict[str, str]]
-
-        # TODO: _prev_data load = same dict format as packages
-        # Check for update history -
+        # TODO: previous run dict comparison
         if os.path.exists(PipUpdater.DEFAULT_LOCATION) != False:
-            with open(PipUpdater.DEFAULT_LOCATION) as f:
-                self.packages["old"] = json.loads(f.read())["current"]
+            print("coming soon")
 
-        self.packages["current"] = _installed_pkgs()
-
-    # to be moved within update() later
-    def out_of_date(self):
-        if 
 
 
     def save_changes(self, *args: str) -> None:
@@ -52,7 +43,7 @@ class PipUpdater:
                 - Takes a filepath optional argument
                     - Or, uses default (cwd) location w/ name .updater_history
         """
-        if len(args) is 0:
+        if len(args) == 0:
             with open(PipUpdater.DEFAULT_LOCATION, "w") as s:
                 json.dump(self.packages, s, indent=4)
 
