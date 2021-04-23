@@ -5,6 +5,7 @@ import subprocess
 import json
 from typing import Dict, List, Union
 
+
 def _scan() -> List[Dict[str, str]]:
     _keys = ("name", "current_version", "newer_version")
     _pip_pkgs = (
@@ -12,43 +13,55 @@ def _scan() -> List[Dict[str, str]]:
         .stdout.decode()
         .splitlines()
     )
-    
-    return [dict(zip(_keys, pkg)) for pkg in [tuple(t.split()[:3]) for t in _pip_pkgs[2:]]]
+
+    return [
+        dict(zip(_keys, pkg)) for pkg in [tuple(t.split()[:3]) for t in _pip_pkgs[2:]]
+    ]
 
 
 class PipUpdater:
-    """ Automates checking for and, updating PyPI packages.\n
-        packages: Dict[str, Dict[str, str]]
-            - { "current":{}, "new":{}, "old":{} }\n
-        See functions for additional information.
+    """Automates checking for and, updating PyPI packages.\n
+    packages: Dict[str, Dict[str, str]]
+        - { "current":{}, "new":{}, "old":{} }\n
+    See functions for additional information.
     """
 
     DEFAULT_LOCATION: str = f"{os.getcwd()}/.updater_history"
 
     def __init__(self) -> None:
-        """ Load installed PyPI packages & check for data from previous run.\n
-            Sets:
-                packages["current"] = {pkg, ver ...}
+        """Load installed PyPI packages & check for data from previous run.\n
+        Sets:
+            packages["current"] = {pkg, ver ...}
         """
         self.packages = _scan()
 
-        # TODO: previous run dict comparison
-        if os.path.exists(PipUpdater.DEFAULT_LOCATION) != False:
-            print("coming soon")
+        self.save_changes()
 
-
+    def update_all(self) -> None:
+        for pkg in self.packages:
+            print(pkg.values())
 
     def save_changes(self, *args: str) -> None:
-        """ Saves the self.packages dictionary as a JSON file.
-                - Takes a filepath optional argument
-                    - Or, uses default (cwd) location w/ name .updater_history
+        """Saves the self.packages dictionary as a JSON file.
+        - Takes a filepath optional argument
+            - Or, uses default (cwd) location w/ name .updater_history
         """
-        if len(args) == 0:
-            with open(PipUpdater.DEFAULT_LOCATION, "w") as s:
-                json.dump(self.packages, s, indent=4)
+        _save_path: str
 
+        if len(args) == 0:
+            _save_path = PipUpdater.DEFAULT_LOCATION
+
+        elif len(args) > 1:
+            raise IndexError("save_changes() accepts one file path argument")
+
+        else:
+            _save_path = args[0]
+
+        with open(_save_path, "w") as s:
+            json.dump(self.packages, s, indent=4)
 
 
 if __name__ == "__main__":
     t = PipUpdater()
     t.save_changes()
+    t.update_all()
