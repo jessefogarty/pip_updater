@@ -5,7 +5,7 @@ import os
 import subprocess
 import re
 import json
-from typing import Dict
+from typing import Dict, List, Union
 
 
 def _installed_pkgs() -> Dict[str, str]:
@@ -20,7 +20,7 @@ def _installed_pkgs() -> Dict[str, str]:
 class PipUpdater:
     """ Automates checking for and, updating PyPI packages.\n
         packages: Dict[str, Dict[str, str]]
-            - { "current":{}, "new":{}, "last":{} }\n
+            - { "current":{}, "new":{}, "old":{} }\n
         See functions for additional information.
     """
 
@@ -38,9 +38,13 @@ class PipUpdater:
         # Check for update history -
         if os.path.exists(PipUpdater.DEFAULT_LOCATION) != False:
             with open(PipUpdater.DEFAULT_LOCATION) as f:
-                _prev_data = json.loads(f.read())
+                self.packages["old"] = json.loads(f.read())["current"]
 
         self.packages["current"] = _installed_pkgs()
+
+    # to be moved within update() later
+    def out_of_date(self):
+        if 
 
 
     def save_changes(self, *args: str) -> None:
