@@ -26,7 +26,7 @@ class PipUpdater:
     See functions for additional information.
     """
 
-    DEFAULT_LOCATION: str = f"{os.getcwd()}/.updater_history"
+    DEFAULT_LOCATION: str = f"{os.getcwd()}/.updater_history.json"
 
     def __init__(self) -> None:
         """Load installed PyPI packages & check for data from previous run.\n
@@ -39,7 +39,7 @@ class PipUpdater:
 
     def update_all(self) -> None:
         for pkg in self.packages:
-            print(pkg.values())
+            print(pkg["name"])
 
     def save_changes(self, *args: str) -> None:
         """Saves the self.packages dictionary as a JSON file.

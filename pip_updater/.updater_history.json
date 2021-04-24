@@ -1,0 +1,12 @@
+[
+    {
+        "name": "argcomplete",
+        "current_version": "1.12.2",
+        "newer_version": "1.12.3"
+    },
+    {
+        "name": "setuptools",
+        "current_version": "49.2.1",
+        "newer_version": "56.0.0"
+    }
+]
