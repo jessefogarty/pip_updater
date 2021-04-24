@@ -6,24 +6,12 @@ import json
 from typing import Dict, List, Union
 
 
-def _scan() -> List[Dict[str, str]]:
-    _keys = ("name", "current_version", "newer_version")
-    _pip_pkgs = (
-        subprocess.run(["pip", "list", "--outdated"], capture_output=True)
-        .stdout.decode()
-        .splitlines()
-    )
-
-    return [
-        dict(zip(_keys, pkg)) for pkg in [tuple(t.split()[:3]) for t in _pip_pkgs[2:]]
-    ]
-
-
 class PipUpdater:
     """Automates checking for and, updating PyPI packages.\n
     packages: Dict[str, Dict[str, str]]
         - { "current":{}, "new":{}, "old":{} }\n
-    See functions for additional information.
+    See functions for additional information.\n
+    *Note - PipUpdater.scan() is a static method.
     """
 
     DEFAULT_LOCATION: str = f"{os.getcwd()}/.updater_history.json"
@@ -33,9 +21,24 @@ class PipUpdater:
         Sets:
             packages["current"] = {pkg, ver ...}
         """
-        self.packages = _scan()
+        self.packages = PipUpdater.scan()
 
         self.save_changes()
+
+    @staticmethod
+    def scan() -> List[Dict[str, str]]:
+        """ Using `pip list --outdated` scan() returns a list of updatable packages.
+        """
+        _keys = ("name", "current_version", "newer_version")
+        _pip_pkgs = (
+            subprocess.run(["pip", "list", "--outdated"], capture_output=True)
+            .stdout.decode()
+            .splitlines()
+        )
+
+        return [
+            dict(zip(_keys, pkg)) for pkg in [tuple(t.split()[:3]) for t in _pip_pkgs[2:]]
+        ]
 
     def update_all(self) -> None:
         for pkg in self.packages:
@@ -60,8 +63,6 @@ class PipUpdater:
         with open(_save_path, "w") as s:
             json.dump(self.packages, s, indent=4)
 
-
-if __name__ == "__main__":
-    t = PipUpdater()
-    t.save_changes()
-    t.update_all()
+def main():
+    updater = PipUpdater()
+    updater.update_all()
