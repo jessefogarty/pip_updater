@@ -66,3 +66,6 @@ class PipUpdater:
 def main():
     updater = PipUpdater()
     updater.update_all()
+
+
+main()

@@ -5,6 +5,11 @@
         "newer_version": "1.12.3"
     },
     {
+        "name": "pip",
+        "current_version": "21.0.1",
+        "newer_version": "21.1"
+    },
+    {
         "name": "setuptools",
         "current_version": "49.2.1",
         "newer_version": "56.0.0"

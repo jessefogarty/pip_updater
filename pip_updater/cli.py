@@ -1,14 +1,12 @@
 """Console script for pip_updater."""
 import sys
 import click
-
+import PipUpdater
 
 @click.command()
 def main(args=None):
-    """Console script for pip_updater."""
-    click.echo("Replace this message by putting your code into "
-               "pip_updater.cli.main")
-    click.echo("See click documentation at https://click.palletsprojects.com/")
+    x = PipUpdater()
+    x.update_all()
     return 0
 
 

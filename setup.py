@@ -34,7 +34,7 @@ setup(
     description="A python module that automates the updating of installed PyPI modules.",
     entry_points={
         'console_scripts': [
-            'pip_updater=pip_updater.cli:main',
+            'pip_updater=pip_updater.pip_updater:main',
         ],
     },
     install_requires=requirements,
